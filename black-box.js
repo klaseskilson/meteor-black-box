@@ -1,31 +1,39 @@
-var originalMethods = Meteor.methods;
+// method overloading
+var replaceMethods = function (conf) {
+  var originalMethods = Meteor.methods;
 
-var _logger = {
-  func: console.info,
-  context: console
-};
+  Meteor.methods = function (dict) {
+    var newDict = {};
 
-Meteor.methods = function (dict) {
-  var newDict = {};
+    _.each(dict, function (func, name) {
+      var wrappedFunction = _.wrap(func, function(innerFunc /*, arguments */) {
+        // slice away the first parameter
+        var args = Array.prototype.slice.call(arguments, 1);
 
-  _.each(dict, function (func, name) {
-    var wrappedFunction = _.wrap(func, function(innerFunc /*, arguments */) {
-      // slice away the first parameter
-      var args = Array.prototype.slice.call(arguments, 1);
+        conf.log.function.call(conf.log.context, "Calling '" + name + "', arguments:", args);
 
-      _logger.func.call(_logger.context, "Calling '" + name + "', arguments:", args);
+        var result = innerFunc.apply(this, args);
+        if (typeof result !== 'undefined') {
+          conf.log.function.call(conf.log.context, "Result from '" + name + "':", result);
+        }
 
-      var result = innerFunc.apply(this, args);
-      if (typeof result !== 'undefined') {
-        _logger.func.call(_logger.context, "Result from '" + name + "':", JSON.stringify(result));
-      }
+        conf.log.function.call(conf.log.context, "Ending '" + name + "' call");
+        return result;
+      });
 
-      _logger.func.call(_logger.context, "Ending '" + name + "' call");
-      return result;
+      newDict[name] = wrappedFunction;
     });
 
-    newDict[name] = wrappedFunction;
-  });
-
-  originalMethods(newDict);
+    originalMethods(newDict);
+  };
 };
+
+if (Meteor.isClient) {
+  _.defaults(BlackBox.client, BlackBox.global);
+  replaceMethods(BlackBox.client);
+}
+
+if (Meteor.isServer) {
+  _.defaults(BlackBox.server, BlackBox.global);
+  replaceMethods(BlackBox.server);
+}
