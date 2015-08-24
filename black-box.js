@@ -7,7 +7,7 @@ var replaceMethods = function (conf) {
 
     _.each(dict, function (func, name) {
       var wrappedFunction = _.wrap(func, function(innerFunc /*, arguments */) {
-        // slice away the first parameter
+        // we want the arguments without `innerFunc`
         var args = Array.prototype.slice.call(arguments, 1);
 
         conf.log.function.call(conf.log.context, "Calling '" + name + "', arguments:", args);
@@ -29,11 +29,9 @@ var replaceMethods = function (conf) {
 };
 
 if (Meteor.isClient) {
-  _.defaults(BlackBox.client, BlackBox.global);
   replaceMethods(BlackBox.client);
 }
 
 if (Meteor.isServer) {
-  _.defaults(BlackBox.server, BlackBox.global);
   replaceMethods(BlackBox.server);
 }
