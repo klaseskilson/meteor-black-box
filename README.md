@@ -27,8 +27,8 @@ method call will be logged both on the server and on the client.
 Add your methods as usual:
 
 ```javascript
-// /lib/methods/some_collection_methods.js
-Meteor.methos({
+// lib/methods/some_collection_methods.js
+Meteor.methods({
   subtract: function(a, b) {
     return a - b;
   },
@@ -48,7 +48,7 @@ Meteor.methos({
 Then call you methods (again, as usual):
 
 ```javascript
-// /wherever/whatever.js
+// wherever/whatever.js
 
 Meteor.call('subtract', 1, 3, function(error, result) {
   // result = -2
@@ -89,7 +89,7 @@ BlackBox = {
 };
 ```
 
-By modifing the global `BlackBox` object, you can configure BlackBox' behaviour
+By modifying the global `BlackBox` object, you can configure BlackBox' behavior
 to fit your needs.
 
 Due to Meteor's [file load order](http://docs.meteor.com/#/full/fileloadorder),
@@ -103,7 +103,7 @@ For example, to change the result log on the client, you can simply pass along
 any logging function. Like so:
 
 ```javascript
-// yourapp/client/lib/black_box.js
+// client/lib/black_box.js
 BlackBox.client.result = Log.debug;
 ```
 
@@ -112,7 +112,7 @@ simply modify the `BlackBox.global` object in a shared server/client environment
 such as `/lib`. Like so:
 
 ```javascript
-// yourapp/lib/black_box.js
+// lib/black_box.js
 BlackBox.global.initiating = MyFavouriteLoggingFunction;
 ```
 
@@ -122,11 +122,11 @@ Logging can be prevented on `client/server/global` level by setting the
 `silent` option to `true`. Like so:
 
 ```javascript
-// yourapp/lib/black_box.js
+// lib/black_box.js
 BlackBox.global.silent = true;
 ```
 ```javascript
-// yourapp/lib/server/black_box.js
+// lib/server/black_box.js
 BlackBox.server.silent = true;
 ```
 
@@ -134,15 +134,16 @@ In order to prevent logging on a output-specific level, use something like
 [Underscore's `_.identity`](http://underscorejs.org/#identity). Like so:
 
 ```javascript
-// yourapp/lib/black_box.js
+// lib/black_box.js
 // no result log, please
 BlackBox.global.result = _.identity;
 ```
 
 ### Silent methods
 
-This package wrapps the default `Meteor.methods`. In order to make it possible to create silent
-methods, it also exposes `SilentMethods`. `SilentMethods` can be used just like `Meteor.methods`:
+This package wraps the default `Meteor.methods`. In order to make it possible to
+create silent methods, it also exposes `SilentMethods`. `SilentMethods` can be
+used just like `Meteor.methods`:
 
 ```javascript
 SilentMethods({
