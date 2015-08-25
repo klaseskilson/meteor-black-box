@@ -10,14 +10,14 @@ var replaceMethods = function (conf) {
         // we want the arguments without `innerFunc`
         var args = Array.prototype.slice.call(arguments, 1);
 
-        conf.log.function.call(conf.log.context, "Calling '" + name + "', arguments:", args);
+        conf.log.initiating.call(conf.log.context, "Calling '" + name + "', arguments:", args);
 
         var result = innerFunc.apply(this, args);
         if (typeof result !== 'undefined') {
-          conf.log.function.call(conf.log.context, "Result from '" + name + "':", result);
+          conf.log.result.call(conf.log.context, "Result from '" + name + "':", result);
         }
 
-        conf.log.function.call(conf.log.context, "Ending '" + name + "' call");
+        conf.log.ending.call(conf.log.context, "Ending '" + name + "' call");
         return result;
       });
 
@@ -29,9 +29,13 @@ var replaceMethods = function (conf) {
 };
 
 if (Meteor.isClient) {
-  replaceMethods(BlackBox.client);
+  if (!BlackBox.client.silent) {
+    replaceMethods(BlackBox.client);
+  }
 }
 
 if (Meteor.isServer) {
-  replaceMethods(BlackBox.server);
+  if (!BlackBox.server.silent) {
+    replaceMethods(BlackBox.server);
+  }
 }

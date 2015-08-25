@@ -6,7 +6,9 @@ BlackBox = BlackBox || {
   // global config for client + server
   global: {
     log: {
-      function: console.info,
+      initiating: console.info,
+      result: console.log,
+      ending: console.info,
       context: console
     }
   }
