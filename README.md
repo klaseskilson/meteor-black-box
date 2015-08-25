@@ -22,6 +22,52 @@ meteor add klaseskilson:black-box
 Using BlackBox is dead simple. Simply install it, and you're good to go. Every
 method call will be logged both on the server and on the client.
 
+### Example
+
+Add your methods as usual:
+
+```javascript
+// /lib/methods/some_collection_methods.js
+Meteor.methos({
+  subtract: function(a, b) {
+    return a - b;
+  },
+
+  something: function() {
+    console.log('Updating something...');
+    SomeCollection.update({}, {
+        $set: {
+          whatever: 'nothing'
+        }
+      });
+    // no return value!
+  }
+});
+```
+
+Then call you methods (again, as usual):
+
+```javascript
+// /wherever/whatever.js
+
+Meteor.call('subtract', 1, 3, function(error, result) {
+  // result = -2
+});
+
+Meteor.call('something');
+```
+
+BlackBox has now put something in our log:
+
+```
+(i) Calling 'subtract', arguments: [1, 3]
+    Result from 'subtract': -2
+(i) Ending 'subtract' call
+(i) Calling 'something', arguments: []
+    Updating something...                     <----- log from function!
+(i) Ending 'something' call
+```
+
 ### Config
 
 Logging can be configured for both server and client, separately or both at the
@@ -42,6 +88,9 @@ BlackBox = {
   server: /*copy of global*/
 };
 ```
+
+By modifing the global `BlackBox` object, you can configure BlackBox' behaviour
+to fit your needs.
 
 Due to Meteor's [file load order](http://docs.meteor.com/#/full/fileloadorder),
 it is recommended to place your configuration in a `lib` folder. Also, make sure
