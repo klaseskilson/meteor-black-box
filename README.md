@@ -1,3 +1,6 @@
+# ⚠️ THIS PACKAGE IS NO LONGER MAINTAINED
+
+
 # [klaseskilson:black-box](https://atmospherejs.com/klaseskilson/black-box)
 
 ✈️ The **Meteor** equivalent of a flight recorder.
